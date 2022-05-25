@@ -1,0 +1,20 @@
+<?php
+
+
+
+function kodinat_menu(){
+	$items = array();
+	
+	$items['kodinat'] = array(
+		'title' 			=> 	'kodinat',
+		'page callback'		=>	'kodinat',
+		'access callback'	=>	TRUE
+	);
+	
+	return $items;
+}
+
+
+function kodinat(){
+		return t('Kodinat!');
+}

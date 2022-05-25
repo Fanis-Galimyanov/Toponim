@@ -1,0 +1,5 @@
+; &Id:$
+name = kodinat
+description = Fanis Galimyanov
+version = 7.x-dev
+core = 7.x

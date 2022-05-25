@@ -1,0 +1,55 @@
+<?php
+
+function nodekordinat_node_insert($node) {
+   if($node->type =='toponim')
+   {  
+	  $field_values = field_get_items('node', $node, 'field_kordinati'); 
+	  
+	  if($field_values)
+	  {
+		$string_kordinat =  $field_values[0]['value'];
+		$string_kordinat  =  explode(',', $string_kordinat);
+		$latitude = $string_kordinat[0];
+		$longitude = $string_kordinat[1];
+			
+		if(stristr($latitude, 'с') || stristr($latitude, 'ш') || stristr($longitude, 'в')) 
+           {
+			$DD = stristr($latitude, '°', true);
+			$latitude = substr($latitude, stripos($latitude, '°')+2);
+			$MM = stristr($latitude, '′', true);
+			$latitude = substr($latitude, stripos($latitude, '′')+3);
+			$SS = preg_replace("/[^0-9]/", '', $latitude);	
+			$latitude = $DD + $MM/60 + $SS/3600;
+			
+			$DD = stristr($longitude, '°', true); $DD = preg_replace("/[^0-9]/", '', $DD);
+			$longitude = substr($longitude, stripos($longitude, '°')+2);
+			$MM = stristr($longitude, '′', true);
+			$longitude = substr($longitude, stripos($longitude, '′')+3);
+			$SS = preg_replace("/[^0-9]/", '', $longitude);	
+			$longitude = $DD + $MM/60 + $SS/3600;
+			
+			$node-> field_kordinati['und'][0]['value'] =  $latitude . ' ' . $longitude;
+			
+			$node->field_geofild_toponim[LANGUAGE_NONE][0] = geofield_compute_values(
+				array(
+						'lat' => $venue->location->lat = $latitude, 
+						'lon' => $venue->location->lng = $longitude,
+					), GEOFIELD_INPUT_LAT_LON);
+		   }
+		
+		else
+			{
+				if(stristr($longitude, ' ')){
+					$node-> field_kordinati['und'][0]['value'] =  $latitude . $longitude;
+											}
+				else{
+					$node-> field_kordinati['und'][0]['value'] =  $latitude . ' ' . $longitude;
+					}
+			}
+			
+		drupal_set_message(ord($node-> field_kordinati['und'][0]['value']{2}));
+	  }
+	  
+field_attach_update('node', $node);
+   }
+}
